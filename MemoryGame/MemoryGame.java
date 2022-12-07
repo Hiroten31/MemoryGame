@@ -13,6 +13,7 @@ public class MemoryGame {
     static ArrayList<String> pickedWords = new ArrayList<String>();
     static ArrayList<String> wordsToUncover = new ArrayList<String>();
     static int hearths;
+    static String paddingWidth;
 
     //Method to clear console out of useless stuff.
     public static void consoleClear(){
@@ -49,6 +50,7 @@ public class MemoryGame {
             wordsList.remove(wordIndex);
         }
 
+        paddingWidth = "%" + (longestWord+3) + "s";
         //Reusing the old list to make it full of 'x' for printing them into the matrix.
         wordsList.clear();
         for(int j = 0; j < pickedWords.size()*2; j++) 
@@ -78,24 +80,25 @@ public class MemoryGame {
         System.out.print(pickedWords.get(pickedWords.size()-1) + ".\n\n");
 
         //Printing table
+        System.out.print("  ");
         for(int i = 1; i <= c; i++) {
-            System.out.print("\t" + i);
+            System.out.printf(paddingWidth, i);
         }
         int x = 0;
         String word1, word2;
         word1 = "x";
         word2 = "y";
         for(int i = 1; i <= r; i++) {
-            System.out.print("\n" + i + ". ");
+            System.out.printf("%3.3s", "\n" + i + ".");
             for(int j = 0; j < c; j++){
                 if(x == coords){
-                    System.out.print("\t" + wordsToUncover.get(x));
+                    System.out.printf(paddingWidth, wordsToUncover.get(x));
                     word1 = wordsToUncover.get(x);
                 } else if(x == coords2){
-                    System.out.print("\t" + wordsToUncover.get(x));
+                    System.out.printf(paddingWidth, wordsToUncover.get(x));
                     word2 = wordsToUncover.get(x);
                 } else {
-                    System.out.print("\t" + wordsList.get(x));
+                    System.out.printf(paddingWidth, wordsList.get(x));
                 }
                 x++;
             }
@@ -173,7 +176,6 @@ public class MemoryGame {
     }
 }
 /* TO DO:
- * Tabs to correctly represent matrix without shifting the rows.
  * Full highscore table. 
  * Perphaps fix the amount of hearths to write themselves 'live' instead of after next action.
  */
