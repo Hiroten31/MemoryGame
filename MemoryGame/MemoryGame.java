@@ -58,7 +58,7 @@ public class MemoryGame {
         }
     }
     
-    public static void printMatrix(int r, int c, int coords){
+    public static void printMatrix(int r, int c, int coords, int coords2){
         System.out.println("\n\n\t\t--- MEMORY GAME ---\nHearths: " + hearths + "\n");
 
         //Information about what words have been choosen for the game.
@@ -72,26 +72,29 @@ public class MemoryGame {
             System.out.print("\t\t" + i);
         }
         int x = 0;
-        if(coords != -1){
-            for(int i = 1; i <= r; i++) {
-                System.out.print("\n" + i + ". ");
-                for(int j = 0; j < c; j++){
-                    if(x == coords){
-                        System.out.print("\t\t" + wordsToUncover.get(x));
-                    } else {
-                        System.out.print("\t\t" + wordsList.get(x));
-                    }
-                    x++;
-                }
-            }
-        } else {
-            for(int i = 1; i <= r; i++) {
-                System.out.print("\n" + i + ". ");
-                for(int j = 0; j < c; j++){
+        String word1, word2;
+        word1 = "x";
+        word2 = "y";
+        for(int i = 1; i <= r; i++) {
+            System.out.print("\n" + i + ". ");
+            for(int j = 0; j < c; j++){
+                if(x == coords){
+                    System.out.print("\t\t" + wordsToUncover.get(x));
+                    word1 = wordsToUncover.get(x);
+                } else if(x == coords2){
+                    System.out.print("\t\t" + wordsToUncover.get(x));
+                    word2 = wordsToUncover.get(x);
+                } else {
                     System.out.print("\t\t" + wordsList.get(x));
-                    x++;
                 }
+                x++;
             }
+        }
+        if(word1.equals(word2)){
+            wordsList.set(coords, word1);
+            wordsList.set(coords2, word2);
+        } else if (coords2 != -1 && coords2 != -1){
+            hearths--;
         }
     }
 
@@ -115,20 +118,38 @@ public class MemoryGame {
             
             hearths = ((rows*collumns) + ((rows * collumns)%2))/2;
             int coordinates = -1;
-            printMatrix(rows, collumns, coordinates);
+            int coordinates2 = -1;
+            printMatrix(rows, collumns, coordinates, coordinates2);
             do {
                 int uncoverRow, uncoverCollumn;
-                System.out.print("\nGive me coordinates in the range of the matrix to uncover choosen word: \nRow: ");
+                System.out.print("\nGive me coordinates in the range of the matrix to uncover choosen word:");
                 do{
+                    System.out.print("\nRow: ");
                     uncoverRow = sc.nextInt();
-                } while(uncoverRow >= rows && uncoverRow < 0);
-                System.out.print("Collumn: ");
+                } while(uncoverRow > rows || uncoverRow < 0);
                 do{
+                    System.out.print("\nCollumn: ");
                     uncoverCollumn = sc.nextInt();
-                } while(uncoverCollumn >= collumns && uncoverCollumn < 0);
+                } while(uncoverCollumn > collumns || uncoverCollumn < 0);
                 coordinates = (uncoverRow-1)*collumns + uncoverCollumn-1;
-                printMatrix(rows, collumns, coordinates);
+                printMatrix(rows, collumns, coordinates, coordinates2);
+                do{
+                    System.out.print("\nGive me different coordinates in the range of the matrix to uncover choosen word:");
+                    do{
+                        System.out.print("\nRow: ");
+                        uncoverRow = sc.nextInt();
+                    } while(uncoverRow > rows || uncoverRow < 0);
+                    do{
+                        System.out.print("\nCollumn: ");
+                        uncoverCollumn = sc.nextInt();
+                    } while(uncoverCollumn > collumns || uncoverCollumn < 0);
+                    coordinates2 = (uncoverRow-1)*collumns + uncoverCollumn-1;
+                } while(coordinates == coordinates2);
+                printMatrix(rows, collumns, coordinates, coordinates2);
+                coordinates = -1;
+                coordinates2 = -1;
             } while(hearths > 0);
+            System.out.println("YOU HAVE LOST!");
         }
 
         sc.close();
