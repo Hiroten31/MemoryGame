@@ -27,6 +27,7 @@ public class MemoryGame {
 
         //Adding every line of choosen file to wordsList.
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+        int longestWord = 0;
         try {
             String line;
             while ((line = br.readLine()) != null)
@@ -41,6 +42,10 @@ public class MemoryGame {
         for(int i = 0; i < ((rows*collumns)-((rows*collumns)%2))/2; i++) {
             int wordIndex = random.nextInt(wordsList.size());
             pickedWords.add(i, wordsList.get(wordIndex));
+            //Determining the longest word to adjust the amount of tabulators that is needed to use.
+            if(longestWord < wordsList.get(wordIndex).length()){
+                longestWord = wordsList.get(wordIndex).length();
+            }
             wordsList.remove(wordIndex);
         }
 
@@ -59,6 +64,11 @@ public class MemoryGame {
     }
     
     public static void printMatrix(int r, int c, int coords, int coords2){
+
+        //Taking one hearth if player didn't guessed correctly.
+        if(coords2 != -1 && coords2 != -1 && wordsToUncover.get(coords) != wordsToUncover.get(coords2)){
+            hearths--;
+        }
         System.out.println("\n\n\t\t--- MEMORY GAME ---\nHearths: " + hearths + "\n");
 
         //Information about what words have been choosen for the game.
@@ -69,7 +79,7 @@ public class MemoryGame {
 
         //Printing table
         for(int i = 1; i <= c; i++) {
-            System.out.print("\t\t" + i);
+            System.out.print("\t" + i);
         }
         int x = 0;
         String word1, word2;
@@ -79,22 +89,28 @@ public class MemoryGame {
             System.out.print("\n" + i + ". ");
             for(int j = 0; j < c; j++){
                 if(x == coords){
-                    System.out.print("\t\t" + wordsToUncover.get(x));
+                    System.out.print("\t" + wordsToUncover.get(x));
                     word1 = wordsToUncover.get(x);
                 } else if(x == coords2){
-                    System.out.print("\t\t" + wordsToUncover.get(x));
+                    System.out.print("\t" + wordsToUncover.get(x));
                     word2 = wordsToUncover.get(x);
                 } else {
-                    System.out.print("\t\t" + wordsList.get(x));
+                    System.out.print("\t" + wordsList.get(x));
                 }
                 x++;
             }
         }
+
+        //Determining if player guessed words right or wrong.
         if(word1.equals(word2)){
             wordsList.set(coords, word1);
             wordsList.set(coords2, word2);
-        } else if (coords2 != -1 && coords2 != -1){
-            hearths--;
+            if(wordsList.equals(wordsToUncover)){
+                System.out.println("\nCONGRATULATION, YOU HAVE WON! YOU GUESSED ALL WORDS CORRECTLY!\nYour score is: \n" + ((((r+c)*r)+((r+c)*c))*hearths));
+                System.exit(0);;
+            } else {
+                System.out.println("\nYou guess right. Congrats!");
+            }
         }
     }
 
@@ -106,35 +122,36 @@ public class MemoryGame {
         if(menuOption == 1){
             consoleClear();
             do{
-                System.out.print("\nPlease choose number of rows (between 1-10): ");
+                System.out.print("\nPlease choose number of rows (between 2-10): ");
                 rows = sc.nextInt();
-            } while(rows < 0 && rows > 11);
+            } while(rows < 1 && rows > 11);
 
             do{
-                System.out.print("\nNow, please choose number of collumns (between 1-10): ");
+                System.out.print("\nNow, please choose number of collumns (between 2-10): ");
                 collumns = sc.nextInt();
-            } while(collumns < 0 && collumns > 11);
+            } while(collumns < 1 && collumns > 11);
             pickRandomWords(rows, collumns);
-            
             hearths = ((rows*collumns) + ((rows * collumns)%2))/2;
             int coordinates = -1;
             int coordinates2 = -1;
             printMatrix(rows, collumns, coordinates, coordinates2);
             do {
                 int uncoverRow, uncoverCollumn;
-                System.out.print("\nGive me coordinates in the range of the matrix to uncover choosen word:");
                 do{
-                    System.out.print("\nRow: ");
-                    uncoverRow = sc.nextInt();
-                } while(uncoverRow > rows || uncoverRow < 0);
-                do{
-                    System.out.print("\nCollumn: ");
-                    uncoverCollumn = sc.nextInt();
-                } while(uncoverCollumn > collumns || uncoverCollumn < 0);
-                coordinates = (uncoverRow-1)*collumns + uncoverCollumn-1;
+                    System.out.print("\nGive me coordinates of covered word in the range of the matrix:");
+                    do{
+                        System.out.print("\nRow: ");
+                        uncoverRow = sc.nextInt();
+                    } while(uncoverRow > rows || uncoverRow < 0);
+                    do{
+                        System.out.print("\nCollumn: ");
+                        uncoverCollumn = sc.nextInt();
+                    } while(uncoverCollumn > collumns || uncoverCollumn < 0);
+                    coordinates = (uncoverRow-1)*collumns + uncoverCollumn-1;
+                } while(wordsList.get(coordinates) != "x");
                 printMatrix(rows, collumns, coordinates, coordinates2);
                 do{
-                    System.out.print("\nGive me different coordinates in the range of the matrix to uncover choosen word:");
+                    System.out.print("\nGive me different coordinates of covered word in the range of the matrix:");
                     do{
                         System.out.print("\nRow: ");
                         uncoverRow = sc.nextInt();
@@ -144,17 +161,19 @@ public class MemoryGame {
                         uncoverCollumn = sc.nextInt();
                     } while(uncoverCollumn > collumns || uncoverCollumn < 0);
                     coordinates2 = (uncoverRow-1)*collumns + uncoverCollumn-1;
-                } while(coordinates == coordinates2);
+                } while(coordinates == coordinates2 || wordsList.get(coordinates2) != "x");
                 printMatrix(rows, collumns, coordinates, coordinates2);
                 coordinates = -1;
                 coordinates2 = -1;
             } while(hearths > 0);
-            System.out.println("YOU HAVE LOST!");
+            System.out.println("\nYOU HAVE LOST!");
         }
 
         sc.close();
     }
 }
-/*To do:
-- Saving the choosen coordinates and then comparing if another ones are the same (perhaps coordinates2 in method?).
-*/
+/* TO DO:
+ * Tabs to correctly represent matrix without shifting the rows.
+ * Full highscore table. 
+ * Perphaps fix the amount of hearths to write themselves 'live' instead of after next action.
+ */
