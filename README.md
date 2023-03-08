@@ -1,4 +1,4 @@
-# JavaLearning
+# Java Learning
 Recalling and learning new stuff about Java. The most simple programs to train structural programming. And yes, I see all of those mistakes I made :sweat_smile:
 
 ## Memory Game
