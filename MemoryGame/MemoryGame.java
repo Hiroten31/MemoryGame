@@ -20,13 +20,13 @@ public class MemoryGame {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
-    
+
     //Method to pick up random words for the game.
     public static void pickRandomWords(int rows, int collumns) throws IOException{
         //Here you can choose from which file you want to take words.
         File file = new File("MemoryGame/words.txt");
 
-        //Adding every line of choosen file to wordsList.
+        //Adding every line of chosen file to wordsList.
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
         int longestWord = 0;
         try {
@@ -39,7 +39,7 @@ public class MemoryGame {
 
         //Picking up random index from wordsList to add indexed word to pickedWords list.
         Random random = new Random();
-        
+
         for(int i = 0; i < ((rows*collumns)-((rows*collumns)%2))/2; i++) {
             int wordIndex = random.nextInt(wordsList.size());
             pickedWords.add(i, wordsList.get(wordIndex));
@@ -53,27 +53,27 @@ public class MemoryGame {
 
         //Reusing the old list to make it full of 'x' for printing them into the matrix.
         wordsList.clear();
-        for(int j = 0; j < pickedWords.size()*2; j++) 
+        for(int j = 0; j < pickedWords.size()*2; j++)
             wordsList.add(j, "x");
         //Filling list of words from which we will pick words in matrix
         wordsToUncover.addAll(pickedWords);
         wordsToUncover.addAll(pickedWords);
         Collections.shuffle(wordsToUncover);
-        //Securing the uneven amount of words by adding EMPTY at 1x1 coordinates. 
+        //Securing the uneven amount of words by adding EMPTY at 1x1 coordinates.
         if((rows*collumns)%2 == 1){
             wordsList.add(0, "EMPTY");
             wordsToUncover.add(0, "EMPTY");
         }
     }
-    
+
     public static void printMatrix(int r, int c, int coords, int coords2){
-        //Taking one hearth if player didn't guessed correctly.
+        //Taking one hearth if player didn't guess correctly.
         if(coords2 != -1 && coords2 != -1 && wordsToUncover.get(coords) != wordsToUncover.get(coords2)){
             hearths--;
         }
         System.out.println("\n\n\t\t--- MEMORY GAME ---\nHearths: " + hearths + "\n");
 
-        //Information about what words have been choosen for the game.
+        //Information about what words have been chosen for the game.
         System.out.println("\n\nPICKED WORDS ARE: ");
         for(int k = 0; k < pickedWords.size()-1; k++)
             System.out.print(pickedWords.get(k) + ", ");
@@ -108,7 +108,7 @@ public class MemoryGame {
         if(word1.equals(word2)){
             wordsList.set(coords, word1);
             wordsList.set(coords2, word2);
-            System.out.println("\nYou guess right. Congrats!");
+            System.out.println("\nYou guessed right. Congrats!");
         }
     }
 
@@ -123,7 +123,7 @@ public class MemoryGame {
         } while(rows < 1 && rows > 11);
 
         do{
-            System.out.print("\nNow, please choose number of collumns (between 2-10): ");
+            System.out.print("\nNow, please choose number of columns (between 2-10): ");
             collumns = sc.nextInt();
             sc.nextLine();
         } while(collumns < 1 && collumns > 11);
@@ -169,16 +169,16 @@ public class MemoryGame {
             if(wordsList.equals(wordsToUncover)){
                 score = hearths*((pickedWords.size()+10)*(pickedWords.size()+10)-100);
                 System.out.println("\nCONGRATULATION, YOU HAVE WON! YOU GUESSED ALL WORDS CORRECTLY!\nYour score is: " + score);
-                pickedWords.clear();
-                wordsList.clear();
-                wordsToUncover.clear();
             } else if(hearths == 0){
                 System.out.println("\nYOU HAVE LOST!");
                 score = 1;
             }
         } while(score == 0);
+        pickedWords.clear();
+        wordsList.clear();
+        wordsToUncover.clear();
     }
-    
+
     public static void menuOption() throws IOException{
         consoleClear();
         Scanner sc = new Scanner(System.in);
@@ -206,6 +206,3 @@ public class MemoryGame {
         menuOption();
     }
 }
-/* TO DO:
- * Full highscore table. 
- */
